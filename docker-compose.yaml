@@ -6,8 +6,6 @@ services:
     container_name: sender-service
     ports:
       - "8081:8081"
-    volumes:
-      - .:/app
     environment:
       - GIN_MODE=release
 
@@ -18,7 +16,5 @@ services:
     container_name: status-receiver
     ports:
       - "8082:8082"
-    volumes:
-      - .:/app
     environment:
       - GIN_MODE=release

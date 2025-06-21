@@ -16,8 +16,26 @@ import (
 	"github.com/tiaguinho/gosoap"
 )
 
+type RPOInfo struct {
+	XMLName        xml.Name `xml:"RPOInfo"`
+	PackageCode    string   `xml:"PackageCode"`
+	SenderID       int      `xml:"SenderID"`
+	SenderPass     string   `xml:"SenderPass"`
+	DocumentID     string   `xml:"DocumentID"`
+	F1             string   `xml:"F1"`
+	F2             string   `xml:"F2"`
+	F3             string   `xml:"F3"`
+	F4             string   `xml:"F4"`
+	F5             string   `xml:"F5"`
+	F6             string   `xml:"F6"`
+	F7             string   `xml:"F7,omitempty"`
+	F25            string   `xml:"F25,omitempty"`
+	PageCount      int      `xml:"PageCount"`
+	FileAttachment string   `xml:"FileAttachment"`
+}
+
 func SendTestMessage() error {
-	endpoint := "http://localhost:8081/soap" // временный URL
+	endpoint := "http://mock-soap:9999/soap"
 
 	// HTTP-клиент с логированием
 	transport := &http.Transport{}
@@ -66,6 +84,7 @@ func SendTestMessage() error {
 	}
 
 	// XML-просмотр
+	fmt.Printf("📦 Параметры: %+v\n", params)
 	xmlPreview, _ := xml.MarshalIndent(params, "", "  ")
 	fmt.Println("🧾 XML Body:")
 	fmt.Println(string(xmlPreview))
