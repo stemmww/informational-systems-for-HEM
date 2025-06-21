@@ -1,0 +1,137 @@
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+	xmlns:sch="http://webservices.kazpost.kz/NewHybridMail/schema"
+	xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+	xmlns:tns="http://webservices.kazpost.kz/NewHybridMail/schema"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	targetNamespace="http://webservices.kazpost.kz/NewHybridMail/schema">
+	<wsdl:types>
+		<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+			elementFormDefault="qualified"
+			targetNamespace="http://webservices.kazpost.kz/NewHybridMail/schema">
+			<xs:element name="RPOInfo">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element maxOccurs="1" minOccurs="1" name="PackageCode"
+							type="xs:string" />
+						<xs:element maxOccurs="1" minOccurs="1" name="SenderID"
+							type="xs:int" />
+						<xs:element maxOccurs="1" minOccurs="1" name="SenderPass"
+							type="xs:string" />
+						<xs:element maxOccurs="1" minOccurs="1" name="DocumentID"
+							type="xs:string" />
+						<xs:element maxOccurs="1" minOccurs="1" name="F1"
+							type="xs:string" />
+						<xs:element maxOccurs="1" minOccurs="1" name="F2"
+							type="xs:string" />
+						<xs:element maxOccurs="1" minOccurs="1" name="F3"
+							type="xs:string" />
+						<xs:element maxOccurs="1" minOccurs="1" name="F4"
+							type="xs:string" />
+						<xs:element maxOccurs="1" minOccurs="1" name="F5"
+							type="xs:string" />
+						<xs:element maxOccurs="1" minOccurs="1" name="F6"
+							type="xs:string" />
+						<xs:element maxOccurs="1" minOccurs="0" name="F7"
+							type="xs:string" />
+						<xs:element maxOccurs="1" minOccurs="0" name="F8"
+							type="xs:string" />
+						<xs:element maxOccurs="1" minOccurs="0" name="F9"
+							type="xs:string" />
+						<xs:element maxOccurs="1" minOccurs="0" name="F10"
+							type="xs:string" />
+						<xs:element maxOccurs="1" minOccurs="0" name="F11"
+							type="xs:string" />
+						<xs:element maxOccurs="1" minOccurs="0" name="F12"
+							type="xs:string" />
+						<xs:element maxOccurs="1" minOccurs="0" name="F13"
+							type="xs:string" />
+						<xs:element maxOccurs="1" minOccurs="0" name="F14"
+							type="xs:string" />
+						<xs:element maxOccurs="1" minOccurs="0" name="F15"
+							type="xs:string" />
+						<xs:element maxOccurs="1" minOccurs="0" name="F16"
+							type="xs:string" />
+						<xs:element maxOccurs="1" minOccurs="0" name="F17"
+							type="xs:string" />
+						<xs:element maxOccurs="1" minOccurs="0" name="F18"
+							type="xs:string" />
+						<xs:element maxOccurs="1" minOccurs="0" name="F19"
+							type="xs:string" />
+						<xs:element maxOccurs="1" minOccurs="0" name="F20"
+							type="xs:string" />
+						<xs:element maxOccurs="1" minOccurs="0" name="F21"
+							type="xs:string" />
+						<xs:element maxOccurs="1" minOccurs="0" name="F22"
+							type="xs:string" />
+						<xs:element maxOccurs="1" minOccurs="0" name="F23"
+							type="xs:string" />
+						<xs:element maxOccurs="1" minOccurs="0" name="F24"
+							type="xs:string" />
+						<xs:element maxOccurs="1" minOccurs="0" name="F25"
+							type="xs:string" />
+						<xs:element maxOccurs="1" minOccurs="0" name="FileAttachment"
+							type="xs:string" />
+						<xs:element maxOccurs="1" minOccurs="0" name="PageCount"
+							type="xs:int" />
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="ResponseInfo">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element maxOccurs="1" minOccurs="0" name="ResponseMsg"
+							type="xs:string" />
+						<xs:element maxOccurs="1" minOccurs="0" name="ResponseKpstID"
+							type="xs:string" />
+						<xs:element maxOccurs="1" minOccurs="0" name="ResponseTime"
+							type="xs:dateTime" />
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="SendRPORequest">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element ref="tns:RPOInfo" />
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="SendRPOResponse">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element ref="tns:ResponseInfo" />
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:schema>
+	</wsdl:types>
+	<wsdl:message name="SendRPOResponse">
+		<wsdl:part element="tns:SendRPOResponse" name="SendRPOResponse"></wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="SendRPORequest">
+		<wsdl:part element="tns:SendRPORequest" name="SendRPORequest"></wsdl:part>
+	</wsdl:message>
+	<wsdl:portType name="HybridMail">
+		<wsdl:operation name="SendRPO">
+			<wsdl:input message="tns:SendRPORequest" name="SendRPORequest"></wsdl:input>
+			<wsdl:output message="tns:SendRPOResponse" name="SendRPOResponse"></wsdl:output>
+		</wsdl:operation>
+	</wsdl:portType>
+	<wsdl:binding name="HybridMailSoap11" type="tns:HybridMail">
+		<soap:binding style="document"
+			transport="http://schemas.xmlsoap.org/soap/http" />
+		<wsdl:operation name="SendRPO">
+			<soap:operation soapAction="SendRPO" />
+			<wsdl:input name="SendRPORequest">
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output name="SendRPOResponse">
+				<soap:body use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+	</wsdl:binding>
+	<wsdl:service name="HybridMail">
+		<wsdl:port binding="tns:HybridMailSoap11" name="HybridMailSoap11">
+			<soap:address location="http://localhost:8081/soap" />
+		</wsdl:port>
+	</wsdl:service>
+</wsdl:definitions>
