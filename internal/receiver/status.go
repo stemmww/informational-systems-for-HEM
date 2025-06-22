@@ -35,7 +35,7 @@ type KazpostStatus struct {
 func ReceiveStatus(c *gin.Context) {
 	var env Envelope
 
-	// 🚨 Парсим входящий SOAP XML
+	// Парсит входящий SOAP XML
 	if err := c.ShouldBindXML(&env); err != nil {
 		fmt.Println("❌ Ошибка разбора XML:", err)
 		c.String(http.StatusBadRequest, "Ошибка XML")

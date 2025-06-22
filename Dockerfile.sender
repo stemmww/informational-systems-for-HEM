@@ -2,7 +2,6 @@ FROM golang:1.23-alpine
 
 WORKDIR /app
 
-# Сначала копируем go.mod и go.sum для кэширования зависимостей
 COPY go.mod ./
 COPY go.sum ./
 RUN go mod download

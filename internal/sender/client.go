@@ -33,15 +33,15 @@ type RPOInfo struct {
 }
 
 func SendTestMessage() error {
-	endpoint := "http://localhost:8081/soap" // временный или тестовый SOAP
+	endpoint := "http://localhost:8082/status" // временный SOAP
 
-	// Создаём SOAP-клиент
+	// Создает SOAP-клиент
 	client, err := gosoap.SoapClient(endpoint, http.DefaultClient)
 	if err != nil {
 		return fmt.Errorf("ошибка создания SOAP клиента: %v", err)
 	}
 
-	// Читаем PDF
+	// Читает PDF
 	pdfBytes, err := os.ReadFile("test.pdf")
 	if err != nil {
 		return fmt.Errorf("ошибка чтения PDF: %v", err)
@@ -53,7 +53,7 @@ func SendTestMessage() error {
 		return fmt.Errorf("ошибка определения количества страниц PDF: %v", err)
 	}
 
-	// Формируем структуру RPOInfo
+	// Формирует структуру RPOInfo
 	data := RPOInfo{
 		PackageCode:    "UUID-123",
 		SenderID:       123,
@@ -71,17 +71,17 @@ func SendTestMessage() error {
 		FileAttachment: pdfBase64,
 	}
 
-	// 🧾 Показываем XML
+	// Показывает XML
 	xmlPreview, _ := xml.MarshalIndent(data, "", "  ")
 	fmt.Println("🧾 XML Body:")
 	fmt.Println(string(xmlPreview))
 
-	// 🔁 Оборачиваем структуру в Params
+	// Оборачивает структуру в Params
 	params := gosoap.Params{
 		"RPOInfo": data,
 	}
 
-	// 🚀 Отправка SOAP
+	// Отправка SOAP
 	res, err := client.Call("SendRPO", params)
 	if err != nil {
 		return fmt.Errorf("ошибка при отправке SOAP: %v", err)

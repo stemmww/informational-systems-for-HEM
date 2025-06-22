@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Отправка PDF в ГЭП</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <h1>Отправка PDF в ГЭП</h1>
+  <form action="/submit-form" method="post" enctype="multipart/form-data">
+    <label>ФИО (F1):</label>
+    <input type="text" name="F1" required>
+
+    <label>Адрес (F2):</label>
+    <input type="text" name="F2" required>
+
+    <label>Город (F3):</label>
+    <input type="text" name="F3" required>
+
+    <label>Область (F4):</label>
+    <input type="text" name="F4" required>
+
+    <label>Индекс (F5):</label>
+    <input type="text" name="F5" required>
+
+    <label>Организация (F6):</label>
+    <input type="text" name="F6" required>
+
+    <label>Адрес получателя (F7):</label>
+    <input type="text" name="F7">
+
+    <label>Тип документа (F25):</label>
+    <input type="text" name="F25">
+
+    <label>PDF файл:</label>
+    <input type="file" name="pdf" required>
+
+    <button type="submit">Отправить</button>
+  </form>
+</body>
+</html>
