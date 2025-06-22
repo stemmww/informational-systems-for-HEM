@@ -1,0 +1,14 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <KazpostStatus>
+        <id>ABC123</id>
+        <barcode>770011223344</barcode>
+        <date>2025-06-21T19:00:00</date>
+        <status>Вручено</status>
+        <operator>Почтальон</operator>
+        <recipient>Иванов Иван</recipient>
+        <returnReason>нет</returnReason>
+      </KazpostStatus>
+   </soapenv:Body>
+</soapenv:Envelope>

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:tns="http://kazpost.kz/status/"
+    targetNamespace="http://kazpost.kz/status/">
+
+    <wsdl:types>
+        <xs:schema
+            targetNamespace="http://kazpost.kz/status/"
+            elementFormDefault="qualified">
+
+            <xs:element name="KazpostStatus" type="tns:KazpostStatus"/>
+            <xs:element name="ACCEPT" type="xs:int"/>
+
+            <xs:complexType name="KazpostStatus">
+                <xs:sequence>
+                    <xs:element name="id" type="xs:string"/>
+                    <xs:element name="barcode" type="xs:string"/>
+                    <xs:element name="date" type="xs:dateTime"/>
+                    <xs:element name="status" type="xs:string"/>
+                    <xs:element name="operator" type="xs:string"/>
+                    <xs:element name="recipient" type="xs:string"/>
+                    <xs:element name="returnReason" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:schema>
+    </wsdl:types>
+
+    <wsdl:message name="SendStatusRequest">
+        <wsdl:part name="parameters" element="tns:KazpostStatus"/>
+    </wsdl:message>
+
+    <wsdl:message name="SendStatusResponse">
+        <wsdl:part name="parameters" element="tns:ACCEPT"/>
+    </wsdl:message>
+
+    <wsdl:portType name="StatusReceiverPortType">
+        <wsdl:operation name="SendStatus">
+            <wsdl:input message="tns:SendStatusRequest"/>
+            <wsdl:output message="tns:SendStatusResponse"/>
+        </wsdl:operation>
+    </wsdl:portType>
+
+    <wsdl:binding name="StatusReceiverBinding" type="tns:StatusReceiverPortType">
+        <soap:binding style="document"
+            transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="SendStatus">
+            <soap:operation soapAction="SendStatus"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+
+    <wsdl:service name="StatusReceiverService">
+        <wsdl:port name="StatusReceiverPort" binding="tns:StatusReceiverBinding">
+            <soap:address location="http://localhost:8082/status"/>
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>

@@ -5,17 +5,15 @@ import (
 	"encoding/base64"
 	"encoding/xml"
 	"fmt"
-	"io"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
-	"time"
 
 	"github.com/pdfcpu/pdfcpu/pkg/api"
 	"github.com/tiaguinho/gosoap"
 )
 
+// Структура строго по WSDL
 type RPOInfo struct {
 	XMLName        xml.Name `xml:"RPOInfo"`
 	PackageCode    string   `xml:"PackageCode"`
@@ -35,91 +33,60 @@ type RPOInfo struct {
 }
 
 func SendTestMessage() error {
-	endpoint := "http://mock-soap:9999/soap"
+	endpoint := "http://localhost:8081/soap" // временный или тестовый SOAP
 
-	// HTTP-клиент с логированием
-	transport := &http.Transport{}
-	clientWithLogging := &http.Client{
-		Transport: loggingRoundTripper{transport},
-		Timeout:   30 * time.Second,
+	// Создаём SOAP-клиент
+	client, err := gosoap.SoapClient(endpoint, http.DefaultClient)
+	if err != nil {
+		return fmt.Errorf("ошибка создания SOAP клиента: %v", err)
 	}
 
-	client, err := gosoap.SoapClient(endpoint, clientWithLogging)
+	// Читаем PDF
+	pdfBytes, err := os.ReadFile("test.pdf")
 	if err != nil {
-		return err
-	}
-
-	// Чтение и кодирование pdf
-	pdfPath := "test.pdf"
-	pdfBytes, err := os.ReadFile(pdfPath)
-	if err != nil {
-		log.Fatalf("Ошибка чтения PDF: %v", err)
+		return fmt.Errorf("ошибка чтения PDF: %v", err)
 	}
 	pdfBase64 := base64.StdEncoding.EncodeToString(pdfBytes)
 
-	// Подсчёт страниц
 	pageCount, err := api.PageCount(bytes.NewReader(pdfBytes), nil)
 	if err != nil {
-		log.Fatalf("Ошибка определения количества страниц PDF: %v", err)
+		return fmt.Errorf("ошибка определения количества страниц PDF: %v", err)
 	}
 
-	// SOAP-параметры
-	params := gosoap.Params{
-		"RPOInfo": map[string]interface{}{
-			"PackageCode":    "UUID-123",
-			"SenderID":       123,
-			"SenderPass":     "password",
-			"DocumentID":     "DOC-456",
-			"F1":             "Иванов Иван",
-			"F2":             "ул. Пушкина, д. 10",
-			"F3":             "Алматы",
-			"F4":             "Алматинская",
-			"F5":             "050000",
-			"F6":             "ООО Ромашка",
-			"F7":             "ул. Ленина, 5",
-			"F25":            "R200",
-			"PageCount":      pageCount,
-			"FileAttachment": pdfBase64,
-		},
+	// Формируем структуру RPOInfo
+	data := RPOInfo{
+		PackageCode:    "UUID-123",
+		SenderID:       123,
+		SenderPass:     "password",
+		DocumentID:     "DOC-456",
+		F1:             "Иванов Иван",
+		F2:             "ул. Пушкина, д. 10",
+		F3:             "Алматы",
+		F4:             "Алматинская",
+		F5:             "050000",
+		F6:             "ООО Ромашка",
+		F7:             "ул. Ленина, 5",
+		F25:            "R200",
+		PageCount:      pageCount,
+		FileAttachment: pdfBase64,
 	}
 
-	// XML-просмотр
-	fmt.Printf("📦 Параметры: %+v\n", params)
-	xmlPreview, _ := xml.MarshalIndent(params, "", "  ")
+	// 🧾 Показываем XML
+	xmlPreview, _ := xml.MarshalIndent(data, "", "  ")
 	fmt.Println("🧾 XML Body:")
 	fmt.Println(string(xmlPreview))
 
-	// Отправка
+	// 🔁 Оборачиваем структуру в Params
+	params := gosoap.Params{
+		"RPOInfo": data,
+	}
+
+	// 🚀 Отправка SOAP
 	res, err := client.Call("SendRPO", params)
 	if err != nil {
-		return err
+		return fmt.Errorf("ошибка при отправке SOAP: %v", err)
 	}
 
-	log.Printf("Ответ от сервиса: %+v", res)
+	log.Printf("✅ Ответ от сервиса: %+v", res)
 	return nil
-}
-
-// Логирующий RoundTripper
-type loggingRoundTripper struct {
-	rt http.RoundTripper
-}
-
-func (l loggingRoundTripper) RoundTrip(req *http.Request) (*http.Response, error) {
-	var buf bytes.Buffer
-	req.Body = ioutil.NopCloser(io.TeeReader(req.Body, &buf))
-
-	fmt.Println("📤 RAW SOAP-запрос:")
-	fmt.Println(buf.String())
-
-	resp, err := l.rt.RoundTrip(req)
-	if err != nil {
-		return nil, err
-	}
-
-	respBody, _ := ioutil.ReadAll(resp.Body)
-	fmt.Println("📥 RAW SOAP-ответ:")
-	fmt.Println(string(respBody))
-
-	resp.Body = ioutil.NopCloser(bytes.NewBuffer(respBody))
-	return resp, nil
 }

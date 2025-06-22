@@ -3,6 +3,7 @@ package receiver
 import (
 	"encoding/xml"
 	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -15,7 +16,7 @@ type Envelope struct {
 }
 
 type EnvelopeBody struct {
-	Status KazpostStatus `xml:"SendStatus"`
+	Status KazpostStatus `xml:"KazpostStatus"`
 }
 
 // Структура статуса от ГЭП
@@ -34,15 +35,30 @@ type KazpostStatus struct {
 func ReceiveStatus(c *gin.Context) {
 	var env Envelope
 
+	// 🚨 Парсим входящий SOAP XML
 	if err := c.ShouldBindXML(&env); err != nil {
 		fmt.Println("❌ Ошибка разбора XML:", err)
 		c.String(http.StatusBadRequest, "Ошибка XML")
 		return
 	}
 
+	status := env.Body.Status
+
+	// Валидация обязательных полей
+	if status.ID == "" || status.Barcode == "" || status.Date == "" || status.Status == "" {
+		fmt.Println("❌ Ошибка валидации: обязательные поля пусты")
+		c.String(http.StatusBadRequest, "Ошибка: обязательные поля пусты (id, barcode, date, status)")
+		return
+	}
+
+	// Успех
 	fmt.Println("📥 Получен статус от ГЭП:")
-	fmt.Printf("%+v\n", env.Body.Status)
+	fmt.Printf("%+v\n", status)
 
 	c.Header("Content-Type", "application/xml")
+
+	log.Printf("📥 Получен статус от ГЭП: ID=%s, Barcode=%s, Date=%s, Status=%s, Recipient=%s\n",
+		status.ID, status.Barcode, status.Date, status.Status, status.Recipient)
+
 	c.String(http.StatusOK, `<ACCEPT>1</ACCEPT>`)
 }
