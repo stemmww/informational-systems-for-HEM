@@ -36,14 +36,13 @@ GEP-INTEGRATION/
 │   └── style.css
 │
 ├── wsdl/
-│   └── HybridMail.wsdl
-│
+│   ├── HybridMail.wsdl
+│   └── status-receiver.wsdl
 ├── docker-compose.yaml
 ├── Dockerfile.sender
 ├── Dockerfile.receiver
 ├── go.mod
-├── go.sum
-└── status-receiver.wsdl
+└── go.sum 
 
 ```
 
