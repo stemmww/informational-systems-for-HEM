@@ -1,8 +1,6 @@
 <wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
 	xmlns:sch="http://webservices.kazpost.kz/NewHybridMail/schema"
-	xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
-	xmlns:tns="http://webservices.kazpost.kz/NewHybridMail/schema"
-	xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://webservices.kazpost.kz/NewHybridMail/schema"
 	targetNamespace="http://webservices.kazpost.kz/NewHybridMail/schema">
 	<wsdl:types>
 		<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
@@ -120,7 +118,7 @@
 		<soap:binding style="document"
 			transport="http://schemas.xmlsoap.org/soap/http" />
 		<wsdl:operation name="SendRPO">
-			<soap:operation soapAction="SendRPO" />
+			<soap:operation soapAction="" />
 			<wsdl:input name="SendRPORequest">
 				<soap:body use="literal" />
 			</wsdl:input>
@@ -131,7 +129,7 @@
 	</wsdl:binding>
 	<wsdl:service name="HybridMail">
 		<wsdl:port binding="tns:HybridMailSoap11" name="HybridMailSoap11">
-			<soap:address location="http://localhost:8081/soap" />
+			<soap:address location="http://kazpost.kz/status/" /> 
 		</wsdl:port>
 	</wsdl:service>
 </wsdl:definitions>

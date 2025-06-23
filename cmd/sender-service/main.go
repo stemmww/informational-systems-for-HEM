@@ -10,17 +10,15 @@ import (
 func main() {
 	r := gin.Default()
 
-	// Подключаю статику для стилей
+	// Папка со статическими файлами (например, CSS)
 	r.Static("/static", "./web")
 
-	// Возврат HTML формы из файла
-	r.GET("/form", func(c *gin.Context) {
-		c.File("./web/form.html")
-	})
+	// Отображение HTML формы
+	r.GET("/form", sender.ShowForm)
 
-	// Обработка формы
+	// Обработка формы и отправка SOAP
 	r.POST("/submit-form", sender.HandleForm)
 
-	log.Println(" sender-service слушает на :8081")
+	log.Println("🚀 sender-service слушает на :8081")
 	r.Run(":8081")
 }

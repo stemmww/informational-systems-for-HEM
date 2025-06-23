@@ -3,20 +3,22 @@ package sender
 import (
 	"bytes"
 	"encoding/base64"
-	"encoding/xml"
-	"fmt"
-	"io"
 	"log"
 	"net/http"
+	"os"
+
+	"gep-integration/myservice"
 
 	"github.com/gin-gonic/gin"
+	"github.com/hooklift/gowsdl/soap"
 	"github.com/pdfcpu/pdfcpu/pkg/api"
-	"github.com/tiaguinho/gosoap"
 )
 
-// Обработчик формы
+func ShowForm(c *gin.Context) {
+	c.File("web/form.html")
+}
+
 func HandleForm(c *gin.Context) {
-	// Чтение полей
 	f1 := c.PostForm("F1")
 	f2 := c.PostForm("F2")
 	f3 := c.PostForm("F3")
@@ -26,32 +28,45 @@ func HandleForm(c *gin.Context) {
 	f7 := c.PostForm("F7")
 	f25 := c.PostForm("F25")
 
-	// Получает PDF
-	file, _, err := c.Request.FormFile("pdf")
+	file, err := c.FormFile("pdf")
 	if err != nil {
-		c.String(http.StatusBadRequest, "Ошибка чтения PDF: %v", err)
+		c.String(http.StatusBadRequest, "Ошибка загрузки файла: %v", err)
 		return
 	}
-	defer file.Close()
 
-	// Чтение файла в память
+	src, err := file.Open()
+	if err != nil {
+		c.String(http.StatusInternalServerError, "Ошибка открытия файла: %v", err)
+		return
+	}
+	defer src.Close()
+
 	buf := new(bytes.Buffer)
-	if _, err := io.Copy(buf, file); err != nil {
-		c.String(http.StatusInternalServerError, "Ошибка буфера: %v", err)
-		return
-	}
-	pdfBytes := buf.Bytes()
-
-	pageCount, err := api.PageCount(bytes.NewReader(pdfBytes), nil)
+	_, err = buf.ReadFrom(src)
 	if err != nil {
-		c.String(http.StatusBadRequest, "Ошибка определения страниц: %v", err)
+		c.String(http.StatusInternalServerError, "Ошибка чтения файла: %v", err)
 		return
 	}
 
+	pdfBytes := buf.Bytes()
 	pdfBase64 := base64.StdEncoding.EncodeToString(pdfBytes)
 
-	// SOAP отправка
-	data := RPOInfo{
+	tmpPath := os.TempDir() + "/temp.pdf"
+	if err := os.WriteFile(tmpPath, pdfBytes, 0644); err != nil {
+		c.String(http.StatusInternalServerError, "Ошибка временной записи файла: %v", err)
+		return
+	}
+
+	pageCount, err := api.PageCountFile(tmpPath)
+	if err != nil {
+		c.String(http.StatusInternalServerError, "Ошибка определения количества страниц: %v", err)
+		return
+	}
+
+	client := soap.NewClient("http://localhost:8082/soap")
+	hybrid := myservice.NewHybridMail(client)
+
+	rpo := &myservice.RPOInfo{
 		PackageCode:    "UUID-123",
 		SenderID:       123,
 		SenderPass:     "password",
@@ -64,28 +79,20 @@ func HandleForm(c *gin.Context) {
 		F6:             f6,
 		F7:             f7,
 		F25:            f25,
-		PageCount:      pageCount,
+		PageCount:      int32(pageCount),
 		FileAttachment: pdfBase64,
 	}
 
-	xmlPreview, _ := xml.MarshalIndent(data, "", "  ")
-	fmt.Println(" XML Body:")
-	fmt.Println(string(xmlPreview))
-
-	endpoint := "http://localhost:8081/soap"
-	client, err := gosoap.SoapClient(endpoint, http.DefaultClient)
-	if err != nil {
-		c.String(http.StatusInternalServerError, "SOAP client error: %v", err)
-		return
+	req := &myservice.SendRPORequest{
+		RPOInfo: rpo,
 	}
 
-	params := gosoap.Params{"RPOInfo": data}
-	res, err := client.Call("SendRPO", params)
+	resp, err := hybrid.SendRPO(req)
 	if err != nil {
 		c.String(http.StatusInternalServerError, "Ошибка отправки SOAP-запроса: %v", err)
 		return
 	}
 
-	log.Printf(" Ответ от сервиса: %+v", res)
-	c.String(http.StatusOK, "Сообщение успешно отправлено")
+	log.Printf("✅ Ответ от сервиса: %+v", resp.ResponseInfo)
+	c.String(http.StatusOK, "Успешно отправлено! Ответ: %s", resp.ResponseInfo.ResponseMsg)
 }

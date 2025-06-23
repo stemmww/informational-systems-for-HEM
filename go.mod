@@ -4,8 +4,8 @@ go 1.23.4
 
 require (
 	github.com/gin-gonic/gin v1.10.1
+	github.com/hooklift/gowsdl v0.5.0
 	github.com/pdfcpu/pdfcpu v0.11.0
-	github.com/tiaguinho/gosoap v1.4.4
 )
 
 require (
