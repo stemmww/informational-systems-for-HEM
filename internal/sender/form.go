@@ -89,10 +89,29 @@ func HandleForm(c *gin.Context) {
 
 	resp, err := hybrid.SendRPO(req)
 	if err != nil {
+		log.Printf("Ошибка при отправке SOAP-запроса: %v", err)
 		c.String(http.StatusInternalServerError, "Ошибка отправки SOAP-запроса: %v", err)
 		return
 	}
 
-	log.Printf("✅ Ответ от сервиса: %+v", resp.ResponseInfo)
-	c.String(http.StatusOK, "Успешно отправлено! Ответ: %s", resp.ResponseInfo.ResponseMsg)
+	info := resp.ResponseInfo
+	if info == nil {
+		log.Println("Пустой ответ от сервиса")
+		c.String(http.StatusInternalServerError, "Ошибка: пустой ответ от сервиса")
+		return
+	}
+
+	log.Printf("Ответ от сервиса:\n- Msg: %s\n- KPST ID: %s\n- Time: %s",
+		info.ResponseMsg, info.ResponseKpstID, info.ResponseTime)
+
+	log.Printf("Сохранено в лог: KPST_ID=%s, Документ=%s, Получатель=%s",
+		info.ResponseKpstID, rpo.DocumentID, rpo.F1)
+
+	if info.ResponseMsg != "Документ принят" {
+		c.String(http.StatusOK, "Ответ: %s\nID: %s", info.ResponseMsg, info.ResponseKpstID)
+	} else {
+		c.String(http.StatusOK, "Успешно отправлено!\nОтвет: %s\nID: %s\nВремя: %s",
+			info.ResponseMsg, info.ResponseKpstID, info.ResponseTime)
+	}
+
 }
