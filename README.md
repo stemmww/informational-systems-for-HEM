@@ -67,7 +67,7 @@ Receive status: http://localhost:8082
 ```
 
 ## Utilization
-```
+```bash
 Sending a PDF document to GEO
 Open the page in your browser: http://localhost:8081/form
 
@@ -95,7 +95,7 @@ Click “Send”. The SOAP request will be generated and sent to the GEP.
 ```
 
 ## Manual Test: Receiving Status (HEM Emulation)
-```
+```bash
 You can test the receiving of delivery statuses either via curl or using SoapUI.
 
 Option 1: cURL
@@ -151,6 +151,19 @@ Set the endpoint:
 http://localhost:8082/status
 
 Click “Send”You should receive this response:
+```
+
+## 📄 Logging in Docker
+
+All logs from the sender-service and status-receiver services are written into log files inside their respective containers.
+
+### 🔍 View logs for `sender-service`
+
+To check the logs of outgoing SOAP requests and responses:
+
+```bash
+docker exec -it sender-service cat sender.log
+docker exec -it status-receiver cat status.log
 ```
 
   
