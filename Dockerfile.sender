@@ -7,7 +7,7 @@ COPY go.sum ./
 RUN go mod download
 
 # Затем копируем весь проект
-COPY test.pdf /app/test.pdf
+# COPY test-data/test.pdf /app/test.pdf
 COPY . .
 
 

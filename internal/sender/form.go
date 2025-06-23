@@ -69,7 +69,7 @@ func HandleForm(c *gin.Context) {
 	}
 
 	xmlPreview, _ := xml.MarshalIndent(data, "", "  ")
-	fmt.Println("🧾 XML Body:")
+	fmt.Println(" XML Body:")
 	fmt.Println(string(xmlPreview))
 
 	endpoint := "http://localhost:8081/soap"
@@ -86,6 +86,6 @@ func HandleForm(c *gin.Context) {
 		return
 	}
 
-	log.Printf("✅ Ответ от сервиса: %+v", res)
+	log.Printf(" Ответ от сервиса: %+v", res)
 	c.String(http.StatusOK, "Сообщение успешно отправлено")
 }

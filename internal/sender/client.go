@@ -73,7 +73,7 @@ func SendTestMessage() error {
 
 	// Показывает XML
 	xmlPreview, _ := xml.MarshalIndent(data, "", "  ")
-	fmt.Println("🧾 XML Body:")
+	fmt.Println(" XML Body:")
 	fmt.Println(string(xmlPreview))
 
 	// Оборачивает структуру в Params
@@ -87,6 +87,6 @@ func SendTestMessage() error {
 		return fmt.Errorf("ошибка при отправке SOAP: %v", err)
 	}
 
-	log.Printf("✅ Ответ от сервиса: %+v", res)
+	log.Printf(" Ответ от сервиса: %+v", res)
 	return nil
 }

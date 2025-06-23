@@ -21,6 +21,6 @@ func main() {
 	// Обработка формы
 	r.POST("/submit-form", sender.HandleForm)
 
-	log.Println("🚀 sender-service слушает на :8081")
+	log.Println(" sender-service слушает на :8081")
 	r.Run(":8081")
 }
