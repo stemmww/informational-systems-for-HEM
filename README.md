@@ -14,23 +14,37 @@
 ## Структура проекта
 ```
 GEP-INTEGRATION/
-│
 ├── cmd/
-│ ├── sender-service/ # Микросервис отправки писем в ГЭП
-│ └── status-receiver/ # Микросервис получения статусов от ГЭП (эмуляция)
+│   ├── sender-service/
+│   │   └── main.go
+│   └── status-receiver/
+│       └── main.go
 │
 ├── internal/
-│ ├── sender/ # Бизнес-логика формирования SOAP-запросов
-│ └── receiver/ # Парсинг и валидация входящих SOAP-статусов
+│   ├── sender/
+│   │   ├── client.go
+│   │   └── form.go
+│   └── receiver/
+│       └── status.go
 │
-├── test-data/ # Примеры PDF и SOAP-запросов
-├── web/ # HTML и CSS интерфейс для загрузки писем вручную
-├── wsdl/ # WSDL-файлы для формата SOAP
+├── test-data/
+│   ├── soap-request.xml
+│   └── test.pdf
 │
-├── docker-compose.yaml # Описание сервисов
+├── web/
+│   ├── form.html
+│   └── style.css
+│
+├── wsdl/
+│   └── HybridMail.wsdl
+│
+├── docker-compose.yaml
 ├── Dockerfile.sender
 ├── Dockerfile.receiver
-├── go.mod / go.sum
+├── go.mod
+├── go.sum
+└── status-receiver.wsdl
+
 ```
 
 ## Установка
